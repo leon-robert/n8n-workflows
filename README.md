@@ -1,50 +1,30 @@
-## n8n-workflows
+<h1>n8n-workflows</h1>
 
-Production-ready n8n automation workflows — built, tested, documented.
+Automation workflows I've built with n8n, a mix of self-initiated projects and generalized client work. Each one is documented the same way: what it does, who it's for, the problem it solves.
 
-What this is
+<h3>Structure</h3>
 
-A working library of automation workflows I've built with n8n. Each one solves a specific operational problem for a business — not a proof-of-concept, a workflow that runs.
-
-How this repo is organized
+<pre>
 n8n-workflows/
-├── portfolio/          # Workflows built to showcase capability
-├── client-templates/   # Reusable, adaptable workflows for new engagements
-├── internal/           # Personal tooling and internal automations
-├── monitoring/         # Workflows that watch systems and alert on issues
+├── portfolio/
+│   └── [workflow-name]/     — workflow.json + its own README
+├── internal/
+│   └── [workflow-name]/     — my own tooling, not client-facing
+├── monitoring/
+│   └── [workflow-name]/     — watches systems, alerts on issues
 └── README.md
-How each workflow is documented
+</pre>
 
-Every entry below follows the same structure, so anyone can scan it fast:
+<h3>Workflows</h3>
 
-Problem — what was broken or manual before this existed
-Solution — what the workflow does, step by step
-Stack — services/APIs connected
-Result — the measurable outcome (time saved, errors reduced, volume handled)
-Workflows
-Portfolio
-secure-lead-intake-webhook
-Problem: Leads submitted through a web form required manual entry into [CRM], delaying first response by [X hours/minutes].
-Solution: Webhook captures form submissions and routes them automatically to [CRM / email / Slack — name the real target].
-Stack: Webhook, [service 1], [service 2]
-Result: [X]% faster response time, or [X] minutes saved per lead.
-<!-- Copy the block above for each new workflow. Keep the same four fields, always in this order. -->
-Client Templates
+| Workflow | What it does |
+|---|---|
+| [secure-lead-intake-webhook](portfolio/secure-lead-intake-webhook/) | Captures form submissions and routes them automatically, no manual entry. |
 
-(in progress)
+<h3>Security</h3>
 
-Internal
+No credentials, API keys, or tokens are stored in this repository. Every workflow references sensitive values through environment variables, never hardcoded. Workflows derived from client work are generalized. Company-specific details and some nodes are changed to protect confidentiality.
 
-(in progress)
+<h3>Contact</h3>
 
-Monitoring
-
-(in progress)
-
-Security
-
-No credentials, API keys, or tokens are stored in this repository. All workflows reference sensitive values through environment variables, never hardcoded.
-
-Contact
-
-Robert Leon — [email or LinkedIn link] Building automation systems that stop SMB owners from being the bottleneck in their own business.
+LinkedIn: [your link] · Email: robert [at] yourdomain [dot] com
