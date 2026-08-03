@@ -25,6 +25,6 @@ n8n-workflows/
 
 No credentials, API keys, or tokens are stored in this repository. Every workflow references sensitive values through environment variables, never hardcoded. Workflows derived from client work are generalized. Company-specific details and some nodes are changed to protect confidentiality.
 
-<h3>Contact</h3>
+<h3>Get in touch</h3>
 
-LinkedIn: [your link] · Email: robert [at] yourdomain [dot] com
+[your website] · [your email] · [your LinkedIn]
