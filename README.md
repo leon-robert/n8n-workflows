@@ -20,6 +20,7 @@ n8n-workflows/
 | Workflow | What it does |
 |---|---|
 | [secure-lead-intake-webhook](portfolio/secure-lead-intake-webhook/) | Captures form submissions and routes them automatically, no manual entry. |
+| [weekly-billing-reconciliation](./portfolio/weekly-billing-reconciliation) | Reconciles CRM, invoicing, and project data every Friday and flags what doesn't add up, no manual cross-checking. |
 
 <h3>Security</h3>
 
