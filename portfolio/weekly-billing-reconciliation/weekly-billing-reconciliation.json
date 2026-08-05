@@ -1,0 +1,1204 @@
+{
+  "name": "weekly-billing-reconciliation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                5
+              ],
+              "triggerAtHour": 16,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2688,
+        -240
+      ],
+      "id": "efc6764c-9019-4a51-9134-d7937a48987b",
+      "name": "Friday 4:30 PM",
+      "notesInFlow": true,
+      "notes": "Every Friday automatically"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appRuDEhe2q2QlpAY",
+          "mode": "list",
+          "cachedResultName": "n8n Practice",
+          "cachedResultUrl": "https://airtable.com/appRuDEhe2q2QlpAY"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblM5ma3HASFPLs0h",
+          "mode": "list",
+          "cachedResultName": "CRM",
+          "cachedResultUrl": "https://airtable.com/appRuDEhe2q2QlpAY/tblM5ma3HASFPLs0h"
+        },
+        "filterByFormula": "=OR(IS_SAME({Close Date}, TODAY(), 'week'), {Close Date} = '')",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        -2240,
+        -432
+      ],
+      "id": "5c69ef29-a7ec-4f27-8350-9f094a77c4c5",
+      "name": "CRM",
+      "notesInFlow": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "dcJV7oUk2Dl6Lc78",
+          "name": "Airtable Personal Access Token account"
+        }
+      },
+      "notes": "This week's clients"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1kuiqOGcmIGGYn1xQ6-v25ng5lETUhiT1AMQwpPvLylM",
+          "mode": "list",
+          "cachedResultName": "Invoicing Tool",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kuiqOGcmIGGYn1xQ6-v25ng5lETUhiT1AMQwpPvLylM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "All",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kuiqOGcmIGGYn1xQ6-v25ng5lETUhiT1AMQwpPvLylM/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2464,
+        -240
+      ],
+      "id": "1081a3db-4605-4a06-9d47-0e3d211d523c",
+      "name": "Invoicing Tool",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Eea4zh6Xs3MQWn40",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "dataSourceId": {
+          "__rl": true,
+          "value": "4f6afd76-d9f9-4d31-b110-16b1288dcfdd",
+          "mode": "list",
+          "cachedResultName": "Project Tracker (Demo)",
+          "cachedResultUrl": "https://app.notion.com/p/5fff546a19754a1e94f15cdb2e87e8f3"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 3,
+      "position": [
+        -2240,
+        -48
+      ],
+      "id": "3c084b7c-5a65-409e-ac07-f4cb8b548b4d",
+      "name": "Project Mgmt Tool",
+      "notesInFlow": true,
+      "credentials": {
+        "notionApi": {
+          "id": "2cUfsoUYjwTy2eXM",
+          "name": "Notion account"
+        }
+      },
+      "notes": "This week's projects"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9389d742-5f97-4d86-ba6e-2e5f584c758f",
+              "name": "match_key",
+              "value": "={{ $json.fields['Client Name'].trim().toUpperCase().replace(/\\.$/, '') }}",
+              "type": "string"
+            },
+            {
+              "id": "3cdff6f7-7bfa-48a2-8cf9-543246a50e94",
+              "name": "week",
+              "value": "={{ $json.fields['Close Date'] ? DateTime.fromISO($json.fields['Close Date']).toFormat(\"kkkk-'W'WW\") : '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -2016,
+        -432
+      ],
+      "id": "9356b95c-ded0-4ba1-af5c-fec889081b76",
+      "name": "Set CRM Fields",
+      "notesInFlow": true,
+      "notes": "Adding match_key & week\n"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b9867b1e-84e2-4f92-95e1-4b92a7a1ed84",
+              "name": "match_key",
+              "value": "={{ $json['Client Name'].trim().toUpperCase().replace(/\\.$/, '') }}",
+              "type": "string"
+            },
+            {
+              "id": "8fc06d14-d398-49c3-b154-45455950d48e",
+              "name": "week",
+              "value": "={{ $json['Date Sent'] ? $json['Date Sent'].toDateTime().format(\"kkkk-'W'WW\") : '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -2240,
+        -240
+      ],
+      "id": "552433d3-d3f3-4a65-8c53-7a73306aa3d4",
+      "name": "Set Invoice Tool Fields",
+      "notesInFlow": true,
+      "notes": "Adding match_key & week\n"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e0f23935-7da5-4be2-a5a7-1c15e0c2c256",
+              "name": "match_key",
+              "value": "={{ $json.property_client_name.trim().toUpperCase().replace(/\\.$/, '') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -2016,
+        -48
+      ],
+      "id": "dc7523be-716e-4794-9787-a3ad07ea51fd",
+      "name": "Set Project Mgmt Tool Fields",
+      "notesInFlow": true,
+      "notes": "Adding match_key; week is already in the wanted format"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst summary = { week: items[0]?.json.week || '', total_clients: items.length, flagged: [] };\nlet totalInvoiced = 0;\nconst seenForRevenue = new Set();\n\nfor (const item of items) {\n  const d = item.json;\n  const client = d.fields ? d.fields['Client Name'] : d['Client Name'];\n\n  if (d.exception !== 'clean' && d.exception !== 'control') {\n    summary.flagged.push({ client, exception: d.exception });\n  }\n  if (d['Invoice Amount (EUR)'] !== undefined && d.exception !== 'refunded' && !seenForRevenue.has(d.match_key)) {\n    totalInvoiced += d['Invoice Amount (EUR)'];\n    seenForRevenue.add(d.match_key);\n  }\n}\n\nsummary.total_invoiced = totalInvoiced;\nsummary.status_note = summary.flagged.length === 0\n  ? 'All clear this week.'\n  : `${summary.flagged.length} item(s) need review: ` + summary.flagged.map(f => `${f.client} (${f.exception})`).join(', ');\n\nreturn [{ json: summary }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1120,
+        -432
+      ],
+      "id": "c8a3248c-abe9-484d-a62d-78e37bf84145",
+      "name": "Summary"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "match_key",
+        "joinMode": "enrichInput1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1792,
+        -336
+      ],
+      "id": "7676d99d-f8a0-4cbd-8035-4057d27ec512",
+      "name": "Merge CRM + Invoice"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "match_key",
+        "joinMode": "enrichInput1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1568,
+        -240
+      ],
+      "id": "65724e4a-3425-4ce2-a663-01f7ae8cf30c",
+      "name": "Merge ALL"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5aceadd3-de1f-428d-ba9e-c980e816d8a2",
+              "leftValue": "={{ $json.property_week }}",
+              "rightValue": "={{ $now.format(\"kkkk-'W'WW\") }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -1792,
+        -48
+      ],
+      "id": "3596bb99-da06-4ac4-b321-f3ba16adf271",
+      "name": "Filter This Week"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "83ec4d36-a339-4567-8cdf-f73135aed804",
+              "leftValue": "={{ $json.week }}",
+              "rightValue": "={{ $now.format(\"kkkk-'W'WW\") }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "36c5c73b-e5e6-4ad3-b692-0fba75d4052e",
+              "leftValue": "={{ $json['Invoice Status'] }}",
+              "rightValue": "Refunded",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -2016,
+        -240
+      ],
+      "id": "59a37cc1-022c-4a70-8c7d-9425b1401444",
+      "name": "Filter This Week || Refund"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1PMx-7kT8gixdi4MtgFi41ldrg3PSw3aSIqOFTUT-Z00",
+          "mode": "list",
+          "cachedResultName": "Forecast",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PMx-7kT8gixdi4MtgFi41ldrg3PSw3aSIqOFTUT-Z00/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Forecast Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PMx-7kT8gixdi4MtgFi41ldrg3PSw3aSIqOFTUT-Z00/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Week": "={{ $json.week }}",
+            "Actual Revenue (EUR)": "={{ $json.total_invoiced }}",
+            "Status Note": "={{ $json.status_note }}"
+          },
+          "matchingColumns": [
+            "Week"
+          ],
+          "schema": [
+            {
+              "id": "Week",
+              "displayName": "Week",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Projected Revenue (EUR)",
+              "displayName": "Projected Revenue (EUR)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Actual Revenue (EUR)",
+              "displayName": "Actual Revenue (EUR)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status Note",
+              "displayName": "Status Note",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -896,
+        -432
+      ],
+      "id": "508827f2-a241-409e-8961-d5ba7112fac3",
+      "name": "Update Forecast",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Eea4zh6Xs3MQWn40",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst counts = {};\nconst output = [];\nconst seenForRevenue = new Set();\n\nfor (const item of items) {\n  counts[item.json.match_key] = (counts[item.json.match_key] || 0) + 1;\n}\n\nfor(const item of items)\n{ const d = item.json;\n  let exception = null;\n  if (counts[d.match_key] > 1) {\n    exception = 'duplicate';\n  }else if (d['Invoice Status'] === 'Refunded') {\n    exception = 'refunded';\n  }else if (d['Invoice Status'] !== undefined && d.fields['Deal Status'] === \"Open\") {\n    exception = 'billing_error';\n  }else if (d['Invoice Amount (EUR)'] !== undefined && d.fields['Deal Value (EUR)'] !== d['Invoice Amount (EUR)']) {\n    exception = 'mismatch';\n  }else if (d['Invoice Status'] !== undefined && d.property_work_completed === false) {\n    exception = 'billed_without_delivery';\n  }else if (d.fields['Close Date'] === undefined) {\n    exception = 'incomplete_record';\n  }else if (d.fields['Deal Status'] === \"Closed Won\" && d['Invoice Status'] === undefined) {\n    exception = 'leak';\n  }else if (d.fields['Deal Status'] === \"Closed Lost\" || d.fields['Deal Status'] === \"Open\") {\n  exception = 'control';\n  }else\n  {\n    exception = 'clean';\n  }\n\noutput.push({ json: { ...d, exception } }); \n}\n\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1344,
+        -240
+      ],
+      "id": "8b5d4b22-5996-4d72-9f02-15768abb1466",
+      "name": "Scanning Errors"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1PMx-7kT8gixdi4MtgFi41ldrg3PSw3aSIqOFTUT-Z00",
+          "mode": "list",
+          "cachedResultName": "Forecast",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PMx-7kT8gixdi4MtgFi41ldrg3PSw3aSIqOFTUT-Z00/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Forecast Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PMx-7kT8gixdi4MtgFi41ldrg3PSw3aSIqOFTUT-Z00/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Week": "={{ $now.plus({ days: 7 }).toFormat(\"kkkk-'W'WW\") }}",
+            "Projected Revenue (EUR)": "={{ $json.data.projected_revenue }}"
+          },
+          "matchingColumns": [
+            "Week"
+          ],
+          "schema": [
+            {
+              "id": "Week",
+              "displayName": "Week",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Projected Revenue (EUR)",
+              "displayName": "Projected Revenue (EUR)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Actual Revenue (EUR)",
+              "displayName": "Actual Revenue (EUR)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status Note",
+              "displayName": "Status Note",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        0,
+        -432
+      ],
+      "id": "5b4cc2bb-5d41-472a-9ac1-631553b9327a",
+      "name": "Next Week Forecast Line",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Eea4zh6Xs3MQWn40",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7659e5aa-2bbb-41ea-a609-bdc14c4ab69b",
+              "leftValue": "={{ $json.exception }}",
+              "rightValue": "clean",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "4064ecb4-1135-4978-96f9-25e128e417df",
+              "leftValue": "={{ $json.exception }}",
+              "rightValue": "control",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -1120,
+        -96
+      ],
+      "id": "1b1bc510-d34d-4184-a6d0-b7a1b447df15",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.exception }}",
+                    "rightValue": "duplicate",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "d084af64-54f7-4ce2-a638-586498e258c4"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "isDuplicate"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "85c37462-8c0a-481e-8fda-3c3a37881c20",
+                    "leftValue": "={{ $json.exception }}",
+                    "rightValue": "refunded",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "isRefunded"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e4c909ce-804d-447a-8eaa-5dcecb94c2f1",
+                    "leftValue": "={{ $json.exception }}",
+                    "rightValue": "billing_error",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "billingError"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2f9cb976-7c5a-4582-bd71-ee6245903378",
+                    "leftValue": "={{ $json.exception }}",
+                    "rightValue": "mismatch",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "isMismatch"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "fb80991f-5e9e-483e-b44b-194e78c89b9c",
+                    "leftValue": "={{ $json.exception }}",
+                    "rightValue": "billed_without_delivery",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "projectNotDone"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "8486ffa6-17f0-45af-9a3b-f8ce4a33ae94",
+                    "leftValue": "={{ $json.exception }}",
+                    "rightValue": "incomplete_record",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "isIncomplete"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2fe4977a-c96c-49db-ac96-ddc94be9c426",
+                    "leftValue": "={{ $json.exception }}",
+                    "rightValue": "leak",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "isLeak"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        -176
+      ],
+      "id": "6db72b16-9578-4890-ae4d-bac675b610e2",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BHWRRHCS0",
+          "mode": "list",
+          "cachedResultName": "error-notifications"
+        },
+        "text": "={{\n\"🚨 *\" + $json.exception.toUpperCase() + \"* — \" + $json.fields['Client Name'] + \" (\" + $json.week + \")\\n\" +\n({\n  billing_error: \"Invoiced while the CRM deal is still marked Open — confirm the deal actually closed.\",\n  mismatch: \"CRM deal value (\" + $json.fields['Deal Value (EUR)'] + \") doesn't match the invoice amount (\" + $json['Invoice Amount (EUR)'] + \").\",\n  refunded: \"Invoice was refunded on \" + $json['Date Refunded'] + \" — confirm this isn't being counted as revenue.\",\n  leak: \"Deal closed in CRM but no invoice was ever created.\"\n}[$json.exception] || \"Needs review.\") +\n\"\\n🔎 Find it: search \\\"\" + $json.match_key + \"\\\" in CRM/Invoicing, or open the project record: \" + ($json.url || \"n/a\")\n}}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        -544,
+        0
+      ],
+      "id": "289f39c0-2363-4120-948d-bff5dcde5f5f",
+      "name": "Alert Billing Channel",
+      "webhookId": "131336bc-1879-4b3c-9c20-2cb4ef69a057",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "3pR3kYSg4TEHDn9A",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BHWRRHCS0",
+          "mode": "list",
+          "cachedResultName": "error-notifications"
+        },
+        "text": "={{\n\"🚨 *\" + $json.exception.toUpperCase() + \"* — \" + $json.fields['Client Name'] + \" (\" + $json.week + \")\\n\" +\n({\n  duplicate: \"This client appears twice in CRM this week — check for a re-sync glitch before counting revenue twice.\",\n  billing_error: \"Invoiced while the CRM deal is still marked Open — confirm the deal actually closed.\",\n  billed_without_delivery: \"Invoiced, but the project isn't marked complete (\" + $json.property_hours_logged + \"h logged so far).\",\n  incomplete_record: \"CRM record is missing a Close Date — find and backfill it.\"\n}[$json.exception] || \"Needs review.\") +\n\"\\n🔎 Find it: search \\\"\" + $json.match_key + \"\\\" in CRM/Invoicing, or open the project record: \" + ($json.url || \"n/a\")\n}}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        -544,
+        -192
+      ],
+      "id": "f696c59b-0376-4cba-81eb-8dbd80d59216",
+      "name": "Alert Product/Ops Channel",
+      "webhookId": "131336bc-1879-4b3c-9c20-2cb4ef69a057",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "3pR3kYSg4TEHDn9A",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "sendAndWait",
+        "user": {
+          "__rl": true,
+          "value": "U09RH711D5E",
+          "mode": "list",
+          "cachedResultName": "nocoderobert05"
+        },
+        "message": "={{ \"📊 Revenue history:\\n\" + $json.historyText + \"\\n\\nSuggested projection for next week: €\" + $json.suggestion + \"\\n\\nAdjust below if you'd like a different number.\" }}",
+        "responseType": "customForm",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Projected Revenue (EUR)",
+              "fieldType": "number",
+              "fieldName": "projected_revenue",
+              "placeholder": "26200",
+              "defaultValue": "={{ $json.suggestion }}",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "limitWaitTime": {
+            "values": {
+              "resumeAmount": 45,
+              "resumeUnit": "minutes"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        -224,
+        -432
+      ],
+      "id": "c36ecd44-10c3-4e74-aeec-06068763ae0f",
+      "name": "Admin Projection Request",
+      "webhookId": "736f6d70-de0e-4b1b-b3f4-960676300837",
+      "notesInFlow": true,
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "3pR3kYSg4TEHDn9A",
+          "name": "Slack account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "45 mins wait"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1PMx-7kT8gixdi4MtgFi41ldrg3PSw3aSIqOFTUT-Z00",
+          "mode": "list",
+          "cachedResultName": "Forecast",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PMx-7kT8gixdi4MtgFi41ldrg3PSw3aSIqOFTUT-Z00/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Forecast Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PMx-7kT8gixdi4MtgFi41ldrg3PSw3aSIqOFTUT-Z00/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -672,
+        -432
+      ],
+      "id": "db1e064e-7dae-4e2d-b071-82dda4517eab",
+      "name": "Read Forecast HIstory",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Eea4zh6Xs3MQWn40",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json);\nconst projected = rows.map((r, i) => ({ x: i, y: r['Projected Revenue (EUR)'] })).filter(p => p.y !== '' && p.y !== undefined);\n\nconst n = projected.length;\nconst sumX = projected.reduce((s, p) => s + p.x, 0);\nconst sumY = projected.reduce((s, p) => s + p.y, 0);\nconst sumXY = projected.reduce((s, p) => s + p.x * p.y, 0);\nconst sumXX = projected.reduce((s, p) => s + p.x * p.x, 0);\nconst slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);\nconst intercept = (sumY - slope * sumX) / n;\nconst suggestion = Math.round(intercept + slope * rows.length);\n\nconst historyText = rows.map(r =>\n  `${r.Week}: projected €${r['Projected Revenue (EUR)']}, actual ${r['Actual Revenue (EUR)'] ? '€' + r['Actual Revenue (EUR)'] : '—'}`\n).join('\\n');\n\nreturn [{ json: { suggestion, historyText } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -448,
+        -432
+      ],
+      "id": "2b884d4a-2bdb-4752-ae3e-d9ce2b855ed7",
+      "name": "Build Suggestion"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Friday 4:30 PM": {
+      "main": [
+        [
+          {
+            "node": "CRM",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Invoicing Tool",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Project Mgmt Tool",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CRM": {
+      "main": [
+        [
+          {
+            "node": "Set CRM Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Invoicing Tool": {
+      "main": [
+        [
+          {
+            "node": "Set Invoice Tool Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Project Mgmt Tool": {
+      "main": [
+        [
+          {
+            "node": "Set Project Mgmt Tool Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Invoice Tool Fields": {
+      "main": [
+        [
+          {
+            "node": "Filter This Week || Refund",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Project Mgmt Tool Fields": {
+      "main": [
+        [
+          {
+            "node": "Filter This Week",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set CRM Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge CRM + Invoice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge CRM + Invoice": {
+      "main": [
+        [
+          {
+            "node": "Merge ALL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge ALL": {
+      "main": [
+        [
+          {
+            "node": "Scanning Errors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter This Week": {
+      "main": [
+        [
+          {
+            "node": "Merge ALL",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Filter This Week || Refund": {
+      "main": [
+        [
+          {
+            "node": "Merge CRM + Invoice",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Summary": {
+      "main": [
+        [
+          {
+            "node": "Update Forecast",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scanning Errors": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Forecast": {
+      "main": [
+        [
+          {
+            "node": "Read Forecast HIstory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Alert Product/Ops Channel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert Billing Channel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert Billing Channel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert Billing Channel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert Product/Ops Channel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert Product/Ops Channel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert Billing Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Admin Projection Request": {
+      "main": [
+        [
+          {
+            "node": "Next Week Forecast Line",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Forecast HIstory": {
+      "main": [
+        [
+          {
+            "node": "Build Suggestion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Suggestion": {
+      "main": [
+        [
+          {
+            "node": "Admin Projection Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "90ae3829-1aba-4e6a-b155-3065c1bff48f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "87f87ba89202c8c9ffe1c49d95a1048ec19d76c5d9416032cb6598fffd0d51d6"
+  },
+  "nodeGroups": [],
+  "id": "w36SqsS7x5wtG82o",
+  "tags": []
+}
