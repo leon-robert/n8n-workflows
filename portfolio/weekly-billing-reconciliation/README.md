@@ -1,29 +1,38 @@
-# Weekly Billing Reconciliation
-<a href="./weekly-billing-reconciliation-preview.png">
-  <img src="./weekly-billing-reconciliation-preview.png" alt="Weekly Billing Reconciliation workflow canvas" >
-</a>
+<h1>Weekly Billing Reconciliation</h1>
 
-**What it does**
+Cross-checks your CRM, invoicing, and project tracker every Friday, and flags what doesn't add up before you do.
 
-Every Friday, this pulls the week's closed deals from a CRM </br> 
-→ cross-checks them against the invoicing tool</br>
-→ cross-checks them again against the project tracker</br>
+<h3>What it does</h3>
 
-Three systems that normally never talk to each other, reconciled automatically.
+→ Pulls this week's records from the CRM, invoicing sheet, and project tracker every Friday afternoon<br>
+→ Matches records by client and scans for 7 specific billing problems<br>
+→ Routes flagged issues to the right Slack channel, and suggests next week's revenue forecast for a human to approve
 
-It catches what hides in the gaps: a deal closed with no invoice</br>
-→ an invoice sent for work that was never delivered</br>
-→ a client billed while their deal still shows "Open"</br>
-→ numbers that don't match between systems</br>
-→ duplicate records</br>
-→ refunds that slipped through.
+<h3>Who it's for</h3>
 
-Flagged issues route straight to Slack: billing problems to one channel, delivery/data problems to another. A revenue summary writes itself into a forecast sheet, and next week's projection gets suggested automatically from the trend, with a human still deciding the final number before it's added.
+Any small consultancy running its CRM, invoicing, and project tracking in separate tools that don't sync, and closing out the week by hand right now.
 
-**Who it's for**
+<h3>The problem</h3>
 
-Any small consultancy running its CRM, invoicing, and project tracking in separate tools that don't sync and closing out the week by hand right now.
+Your CRM says a deal closed. Your invoicing tool says you billed for it. Your project tracker says the work is done. Three separate stories that are supposed to match, and every Friday somebody has to check them against each other by hand, or they don't get checked at all.
 
-**Stack:** Airtable (CRM) · Google Sheets (Invoicing, Forecast ! just for placeholder) · Notion (Project Tracker) · Slack (alerts + human approval)
+<h3>How it runs</h3>
 
-**Setup note:** `weekly-billing-reconciliation.json` has placeholder IDs (`YOUR_..._ID`) wherever it points at a real Airtable base, Google Sheet, Notion database, Slack channel, or Slack user. Swap those for your own before importing. Credentials aren't included, obviously.
+<img src="weekly-billing-reconciliation-canvas.png" alt="workflow diagram">
+
+Friday 4:30pm → pull CRM + Invoicing + Project Tracker → match by client → scan for exceptions → route flagged issues to Slack → log revenue → suggest next week's forecast for approval.
+
+<h3>Stack</h3>
+
+- Airtable (CRM)<br>
+- Google Sheets (Invoicing, Forecast)<br>
+- Notion (Project Tracker)<br>
+- Slack (alerts + forecast approval)
+
+<h3>Setup</h3>
+
+Airtable CRM base, Google Sheets for invoicing and forecast tracking, a Notion project tracker database, Slack OAuth credential with channels for billing and product/ops alerts.
+
+<pre>
+FORECAST_APPROVAL_TIMEOUT_MINUTES=45
+</pre>
