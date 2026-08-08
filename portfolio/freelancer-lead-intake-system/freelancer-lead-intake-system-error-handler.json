@@ -1,0 +1,74 @@
+{
+  "name": "freelancer-lead-intake-system-error-handler",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "f0033e9c-2fea-48ee-be59-f31bfe50767a",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "C0BHWRRHCS0",
+          "cachedResultName": "error-notifications"
+        },
+        "text": "=Workflow failed: {{ $json.workflow.name }}\nError: {{ $json.execution.error.message }}\nExecution: {{ $json.execution.url }}",
+        "otherOptions": {}
+      },
+      "id": "4f1e37f2-c58d-4b42-89b2-e3bf2b71ddbd",
+      "name": "Alert - Workflow Failed",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        304,
+        0
+      ],
+      "webhookId": "745ef326-42d5-401f-adcd-88159c935cfa",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "3pR3kYSg4TEHDn9A",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Alert - Workflow Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "32d81df9-8d15-4daf-bc44-244c7856677f",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "87f87ba89202c8c9ffe1c49d95a1048ec19d76c5d9416032cb6598fffd0d51d6"
+  },
+  "nodeGroups": [],
+  "id": "J3Ey0nslzaRGXVvZ",
+  "tags": []
+}

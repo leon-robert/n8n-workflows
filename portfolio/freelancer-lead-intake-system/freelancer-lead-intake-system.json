@@ -1,0 +1,694 @@
+{
+  "name": "freelancer-lead-intake-system",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "freelancer-lead-intake",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "bf2ef2c6-408d-444e-9058-7d738c355ad0",
+      "name": "Lead Form Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        400
+      ],
+      "webhookId": "cc508af0-bda3-45ef-b6fd-f02a1482ee99"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "name",
+              "name": "name",
+              "value": "={{ $json.body?.name ?? $json.name ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "email",
+              "name": "email",
+              "value": "={{ $json.body?.email ?? $json.email ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "budget",
+              "name": "budget",
+              "value": "={{ $json.body?.budget ?? $json.budget ?? 0 }}",
+              "type": "number"
+            },
+            {
+              "id": "message",
+              "name": "message",
+              "value": "={{ $json.body?.message ?? $json.message ?? \"\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f320b0dd-6642-43af-bf2c-7aa9ec23eba7",
+      "name": "Normalize Lead Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "tier",
+              "name": "tier",
+              "value": "={{ $json.budget >= 1000 ? \"hot\" : ($json.budget >= 300 ? \"warm\" : \"cold\") }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "6c90776b-d24a-4f7f-8693-be2c4d1daad6",
+      "name": "Classify Lead Tier",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "mode": "id",
+          "value": "appRuDEhe2q2QlpAY",
+          "cachedResultName": "n8n Practice"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "tblM3uyRFpH7AVQ1B",
+          "cachedResultName": "Leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.name }}",
+            "Email": "={{ $json.email }}",
+            "Budget": "={{ $json.budget }}",
+            "Message": "={{ $json.message }}",
+            "Tier": "={{ $json.tier }}",
+            "Status": "New"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "Tier",
+              "displayName": "Tier",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0303aa68-80a6-4382-9f0e-e6c7b6e2c5b0",
+      "name": "Store Lead in Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        400
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "dcJV7oUk2Dl6Lc78",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Classify Lead Tier').item.json.tier }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "hot"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "hot"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Classify Lead Tier').item.json.tier }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "warm"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "warm"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Classify Lead Tier').item.json.tier }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "cold"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "cold"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Unclassified"
+        }
+      },
+      "id": "477dade9-d0bc-4619-9bee-d56c2050d4ce",
+      "name": "Route by Lead Tier",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "url": "<__PLACEHOLDER_VALUE__Your lead enrichment API endpoint (e.g. Clearbit, Apollo, SerpAPI) — plug in once you pick a provider__>",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "email",
+              "value": "={{ $('Classify Lead Tier').item.json.email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "10f7ca72-903a-4a31-8bb1-9c6842f49727",
+      "name": "Enrich Hot Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1120,
+        112
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "JMQmQzOSoBSAGJDh",
+          "name": "Calendly Webhook"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "C0BHLCR1DSP",
+          "cachedResultName": "new-leads"
+        },
+        "text": "=Hot lead: {{ $('Classify Lead Tier').item.json.name }} ({{ $('Classify Lead Tier').item.json.email }}) - budget: {{ $('Classify Lead Tier').item.json.budget }}\nMessage: {{ $('Classify Lead Tier').item.json.message }}",
+        "otherOptions": {}
+      },
+      "id": "b6ece024-1d99-49ad-8464-a92a202784c7",
+      "name": "Alert Team - Hot Lead",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        1344,
+        112
+      ],
+      "webhookId": "82fe7160-8c82-4887-b5f7-d41a50ea67da",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "3pR3kYSg4TEHDn9A",
+          "name": "Slack account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Classify Lead Tier').item.json.email }}",
+        "subject": "=Let's find time to talk, {{ $('Classify Lead Tier').item.json.name }}",
+        "emailType": "text",
+        "message": "=Hi {{ $('Classify Lead Tier').item.json.name }},\n\nThanks for reaching out. I'd love to talk through how I can help.\n\nBook a time here: [YOUR CALENDLY LINK]\n\nTalk soon,\nRobert",
+        "options": {}
+      },
+      "id": "f9301972-6567-43f8-b114-55a99fe38e9b",
+      "name": "Send Booking Link Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1568,
+        112
+      ],
+      "webhookId": "e3e7769c-14c8-4b90-a8d2-e5bcf1d82314",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IVIkwPKTy7Q3DJ8G",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "status": "received",
+          "tier": "hot"
+        },
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "b46c4dfc-f2d8-4163-919e-b9913ca72599",
+      "name": "Respond - Hot Lead",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1792,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Classify Lead Tier').item.json.email }}",
+        "subject": "Thanks for reaching out",
+        "emailType": "text",
+        "message": "=Hi {{ $('Classify Lead Tier').item.json.name }},\n\nThanks for sharing what you're working on. Here's a bit about how I typically help freelancers and small teams automate their busywork.\n\nIf it's a fit down the line, just reply to this email.\n\nRobert",
+        "options": {}
+      },
+      "id": "0d0d1d21-959e-45dc-9177-00b5ad9d30b0",
+      "name": "Send Nurture Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        304
+      ],
+      "webhookId": "7a429f85-6d07-41a6-86b3-b91a6df04e22",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IVIkwPKTy7Q3DJ8G",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "status": "received",
+          "tier": "warm"
+        },
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "b928c08e-ca66-476a-a4a4-205d9778848b",
+      "name": "Respond - Warm Lead",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1344,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Classify Lead Tier').item.json.email }}",
+        "subject": "Thanks for reaching out",
+        "emailType": "text",
+        "message": "=Hi {{ $('Classify Lead Tier').item.json.name }},\n\nThanks for getting in touch. Right now this isn't a fit for the projects I take on, but I'll keep your note on file.\n\nAll the best,\nRobert",
+        "options": {}
+      },
+      "id": "1d3d553a-3f30-4c20-88c9-1693cc9b56dd",
+      "name": "Send Polite Rejection",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        496
+      ],
+      "webhookId": "6188392e-804d-4174-bb49-d49151636b3f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IVIkwPKTy7Q3DJ8G",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "status": "received",
+          "tier": "cold"
+        },
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "1a908ef9-9ae7-4190-afaa-2faf427b6be8",
+      "name": "Respond - Cold Lead",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1344,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "C0BHWRRHCS0",
+          "cachedResultName": "error-notifications"
+        },
+        "text": "=Unclassified lead needs manual review: {{ $('Classify Lead Tier').item.json.name }} ({{ $('Classify Lead Tier').item.json.email }}) - budget: {{ $('Classify Lead Tier').item.json.budget }}",
+        "otherOptions": {}
+      },
+      "id": "2b1160b9-5534-46fe-b856-4c730de306bf",
+      "name": "Flag Unclassified Lead",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        1120,
+        688
+      ],
+      "webhookId": "841537e6-4262-4d99-a2bf-8f4df28797b7",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "3pR3kYSg4TEHDn9A",
+          "name": "Slack account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "status": "received",
+          "tier": "unclassified"
+        },
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "bb5405cb-9e14-49cd-814d-c2343a1d10a2",
+      "name": "Respond - Unclassified",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1344,
+        688
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Lead Form Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize Lead Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Lead Data": {
+      "main": [
+        [
+          {
+            "node": "Classify Lead Tier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Lead Tier": {
+      "main": [
+        [
+          {
+            "node": "Store Lead in Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Lead in Airtable": {
+      "main": [
+        [
+          {
+            "node": "Route by Lead Tier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Lead Tier": {
+      "main": [
+        [
+          {
+            "node": "Enrich Hot Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Nurture Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Polite Rejection",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Flag Unclassified Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enrich Hot Lead": {
+      "main": [
+        [
+          {
+            "node": "Alert Team - Hot Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Team - Hot Lead": {
+      "main": [
+        [
+          {
+            "node": "Send Booking Link Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Booking Link Email": {
+      "main": [
+        [
+          {
+            "node": "Respond - Hot Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Nurture Email": {
+      "main": [
+        [
+          {
+            "node": "Respond - Warm Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Polite Rejection": {
+      "main": [
+        [
+          {
+            "node": "Respond - Cold Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flag Unclassified Lead": {
+      "main": [
+        [
+          {
+            "node": "Respond - Unclassified",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "errorWorkflow": "J3Ey0nslzaRGXVvZ"
+  },
+  "versionId": "e5871703-9a1a-481d-8153-06cdc45ef1e8",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "87f87ba89202c8c9ffe1c49d95a1048ec19d76c5d9416032cb6598fffd0d51d6"
+  },
+  "nodeGroups": [],
+  "id": "7G7m0YzTKRNj2pwI",
+  "tags": []
+}
