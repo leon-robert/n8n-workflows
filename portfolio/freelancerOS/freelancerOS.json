@@ -1,0 +1,1642 @@
+{
+  "name": "freelancerOS",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "email-notifications",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -800,
+        -400
+      ],
+      "id": "5493f5cd-111e-4a3b-b459-fb70042a2ecd",
+      "name": "Email Software",
+      "webhookId": "aa3fb02a-1982-4b78-9c8e-9b6417c18a8b",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "bI0Zlcd47pZfDvnD",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "calls-scheduling-software",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        448,
+        -448
+      ],
+      "id": "388bbe82-7ac5-44b2-b64a-f3404e8c7844",
+      "name": "Calendly",
+      "webhookId": "aa3fb02a-1982-4b78-9c8e-9b6417c18a8b",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "bI0Zlcd47pZfDvnD",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "return emailSoftwarePing = {\n  \"action\": $input.item.json.body.action,\n  \"lead_email\": $input.item.json.body.lead_email,\n  \"subject\": $input.item.json.body.subject,\n  \"message\": $input.item.json.body.message,\n  \"timestamp\": $now.toISODate()\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -576,
+        -400
+      ],
+      "id": "5c01da82-e07c-4959-ab96-f08aa4ca3767",
+      "name": "Data Cleanup",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "outbound_sent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "989b7800-bb38-4d2f-bc42-f2d28bebaf31"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "outbound_sent"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0a673d3e-f2e3-4a48-bcba-67edae111156",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "reply",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "reply"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Unrecognized Action"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -384,
+        -416
+      ],
+      "id": "b4cafdc8-12eb-495c-8756-95ad65d451d8",
+      "name": "Router",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appRuDEhe2q2QlpAY",
+          "mode": "list",
+          "cachedResultName": "n8n Practice",
+          "cachedResultUrl": "https://airtable.com/appRuDEhe2q2QlpAY"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblnIRYygaCWB76bj",
+          "mode": "list",
+          "cachedResultName": "FreelancerOS Leads Tracker",
+          "cachedResultUrl": "https://airtable.com/appRuDEhe2q2QlpAY/tblnIRYygaCWB76bj"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $json.lead_email }}",
+            "status": "Sent",
+            "date_created": "={{ $now.toISO().toDateTime().format('yyyy-MM-dd') }}"
+          },
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "company_name",
+              "displayName": "company_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Sent",
+                  "value": "Sent"
+                },
+                {
+                  "name": "Replied",
+                  "value": "Replied"
+                },
+                {
+                  "name": "Call Booked",
+                  "value": "Call Booked"
+                },
+                {
+                  "name": "Proposal Sent",
+                  "value": "Proposal Sent"
+                },
+                {
+                  "name": "Won",
+                  "value": "Won"
+                },
+                {
+                  "name": "Lost",
+                  "value": "Lost"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "date_created",
+              "displayName": "date_created",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "last_modified",
+              "displayName": "last_modified",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "lead_source",
+              "displayName": "lead_source",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "LinkedIn",
+                  "value": "LinkedIn"
+                },
+                {
+                  "name": "Google Places API",
+                  "value": "Google Places API"
+                },
+                {
+                  "name": "Lead Source",
+                  "value": "Lead Source"
+                },
+                {
+                  "name": "Cold Email",
+                  "value": "Cold Email"
+                },
+                {
+                  "name": "Warm Referral",
+                  "value": "Warm Referral"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "revenue",
+              "displayName": "revenue",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        -128,
+        -592
+      ],
+      "id": "6cc9e3e5-3029-4b6f-87dc-045075ef377d",
+      "name": "Update Status - Sent",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "dcJV7oUk2Dl6Lc78",
+          "name": "Airtable Personal Access Token account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appRuDEhe2q2QlpAY",
+          "mode": "list",
+          "cachedResultName": "n8n Practice",
+          "cachedResultUrl": "https://airtable.com/appRuDEhe2q2QlpAY"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblnIRYygaCWB76bj",
+          "mode": "list",
+          "cachedResultName": "FreelancerOS Leads Tracker",
+          "cachedResultUrl": "https://airtable.com/appRuDEhe2q2QlpAY/tblnIRYygaCWB76bj"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $('Data Cleanup').item.json.lead_email }}",
+            "status": "Replied",
+            "date_created": "={{ $now.toISO().toDateTime().format('yyyy-MM-dd') }}"
+          },
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "company_name",
+              "displayName": "company_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Sent",
+                  "value": "Sent"
+                },
+                {
+                  "name": "Replied",
+                  "value": "Replied"
+                },
+                {
+                  "name": "Call Booked",
+                  "value": "Call Booked"
+                },
+                {
+                  "name": "Proposal Sent",
+                  "value": "Proposal Sent"
+                },
+                {
+                  "name": "Won",
+                  "value": "Won"
+                },
+                {
+                  "name": "Lost",
+                  "value": "Lost"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "date_created",
+              "displayName": "date_created",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "last_modified",
+              "displayName": "last_modified",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "lead_source",
+              "displayName": "lead_source",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "LinkedIn",
+                  "value": "LinkedIn"
+                },
+                {
+                  "name": "Google Places API",
+                  "value": "Google Places API"
+                },
+                {
+                  "name": "Lead Source",
+                  "value": "Lead Source"
+                },
+                {
+                  "name": "Cold Email",
+                  "value": "Cold Email"
+                },
+                {
+                  "name": "Warm Referral",
+                  "value": "Warm Referral"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "revenue",
+              "displayName": "revenue",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        -128,
+        -384
+      ],
+      "id": "6a0216e4-fb87-4a3b-bdda-94aba5281143",
+      "name": "Update Status - Replied",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "dcJV7oUk2Dl6Lc78",
+          "name": "Airtable Personal Access Token account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "-1004464447803",
+        "text": "=<b>🚨 New Error</b>\n\n<b>🔧 Phase:</b> <i>Updating status to \"Sent\"</i>\n<b>📄 Message:</b> <code>{{ $json.message }}</code>\n<b>🕐 Time:</b> <i>{{ $now.format('yyyy-MM-dd | HH:mm') }}</i>",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        -512
+      ],
+      "id": "7d26985a-b2ad-499b-ac81-c1a373ac339a",
+      "name": "Telegram Alert Update Sent - Fail",
+      "webhookId": "e5d9e95b-f3bb-4553-b718-f4f20c18a0cd",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "telegramApi": {
+          "id": "wiZvSNnjmpPFqBiL",
+          "name": "FreelancerOS Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "-1004464447803",
+        "text": "=<b>🚨 New Error</b>\n\n<b>🔧 Phase:</b> <i>Updating status to \"Replied\"</i>\n<b>👤 Lead:</b> <code>{{ $('Data Cleanup').item.json.lead_email }}</code>\n<b>✉️ Subject:</b> <i>{{ $('Data Cleanup').item.json.subject }}</i>\n\n<blockquote>{{ $('Data Cleanup').item.json.message }}</blockquote>\n\n\n<b>🕐 Time:</b> <i>{{ $now.format('yyyy-MM-dd | HH:mm') }}</i>",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        -192
+      ],
+      "id": "284d95b0-6da3-42ce-8077-480b7dc75640",
+      "name": "Telegram Alert Update Reply - Fail",
+      "webhookId": "e5d9e95b-f3bb-4553-b718-f4f20c18a0cd",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "telegramApi": {
+          "id": "wiZvSNnjmpPFqBiL",
+          "name": "FreelancerOS Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "-1004464447803",
+        "text": "=<b>💬 New Reply</b>\n\n<b>👤 Lead:</b> <code>{{ $json.fields.email }}</code>\n<b>✉️ Subject:</b> <i>{{ $('Data Cleanup').item.json.subject }}</i>\n\n<blockquote>{{ $('Data Cleanup').item.json.message }}</blockquote>\n\n<b>🕐 Time:</b> <i>{{ $now }}</i>",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        -352
+      ],
+      "id": "f1450a3c-dfa1-4908-afc3-be45b4fb64df",
+      "name": "Telegram Alert Update Reply",
+      "webhookId": "e5d9e95b-f3bb-4553-b718-f4f20c18a0cd",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "telegramApi": {
+          "id": "wiZvSNnjmpPFqBiL",
+          "name": "FreelancerOS Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appRuDEhe2q2QlpAY",
+          "mode": "list",
+          "cachedResultName": "n8n Practice",
+          "cachedResultUrl": "https://airtable.com/appRuDEhe2q2QlpAY"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblnIRYygaCWB76bj",
+          "mode": "list",
+          "cachedResultName": "FreelancerOS Leads Tracker",
+          "cachedResultUrl": "https://airtable.com/appRuDEhe2q2QlpAY/tblnIRYygaCWB76bj"
+        },
+        "filterByFormula": "={email} = \"{{ $json.body.lead_email }}\"",
+        "returnAll": false,
+        "limit": 1,
+        "options": {},
+        "sort": {
+          "property": []
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        -448
+      ],
+      "id": "ac316f9d-933c-4087-bbfe-2df901af5af5",
+      "name": "Email Search",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "notesInFlow": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "dcJV7oUk2Dl6Lc78",
+          "name": "Airtable Personal Access Token account"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "search"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "bf0ce760-783b-4407-a2d0-9d3ddfaa7ec9",
+              "leftValue": "={{ $('Email Search').item.json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        -448
+      ],
+      "id": "062180b2-26c5-42b6-b254-213ac456c407",
+      "name": "Email Validation",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput",
+      "notes": "client exists?"
+    },
+    {
+      "parameters": {
+        "chatId": "-1004464447803",
+        "text": "=<b>🚨 Non-client Call Booked</b>\n\n<b>👤 Email:</b> <code>{{ $('Calendly').item.json.body.email ?? $('Calendly').item.json.body.lead_email ?? 'unknown' }}</code>\n\nGo to your calendly and inspect the booking for more details.\n\n<b>🕐 Time:</b> <i>{{ $now }}</i>",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        -352
+      ],
+      "id": "85500649-4f8b-4a98-ade5-576553982910",
+      "name": "Telegram Alert Non-Client Call Booked",
+      "webhookId": "e5d9e95b-f3bb-4553-b718-f4f20c18a0cd",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "telegramApi": {
+          "id": "wiZvSNnjmpPFqBiL",
+          "name": "FreelancerOS Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "-1004464447803",
+        "text": "=<b>📅 Call Booked</b>\n\n<b>👤 Lead:</b> <code>{{ $json.fields.email }}</code>\n<b>🏢 Company:</b> <i>{{ $json.fields.company_name }}</i>\n<b>🗓️ When:</b> <b>{{ $('Calendly').item.json.body.date }} at {{ $('Calendly').item.json.body.hour }} for {{ $('Calendly').item.json.body.duration_minutes }} minutes</b>\n\n<b>🕐 Notified:</b> <i>{{ $now }}</i>",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        -640
+      ],
+      "id": "bc343e04-0143-4664-ab2e-9172d3af807f",
+      "name": "Telegram Alert Call Booked",
+      "webhookId": "e5d9e95b-f3bb-4553-b718-f4f20c18a0cd",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "telegramApi": {
+          "id": "wiZvSNnjmpPFqBiL",
+          "name": "FreelancerOS Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appRuDEhe2q2QlpAY",
+          "mode": "list",
+          "cachedResultName": "n8n Practice",
+          "cachedResultUrl": "https://airtable.com/appRuDEhe2q2QlpAY"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblnIRYygaCWB76bj",
+          "mode": "list",
+          "cachedResultName": "FreelancerOS Leads Tracker",
+          "cachedResultUrl": "https://airtable.com/appRuDEhe2q2QlpAY/tblnIRYygaCWB76bj"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $json.fields.email }}",
+            "status": "Call Booked"
+          },
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "company_name",
+              "displayName": "company_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Sent",
+                  "value": "Sent"
+                },
+                {
+                  "name": "Replied",
+                  "value": "Replied"
+                },
+                {
+                  "name": "Call Booked",
+                  "value": "Call Booked"
+                },
+                {
+                  "name": "Proposal Sent",
+                  "value": "Proposal Sent"
+                },
+                {
+                  "name": "Won",
+                  "value": "Won"
+                },
+                {
+                  "name": "Lost",
+                  "value": "Lost"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "date_created",
+              "displayName": "date_created",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "last_modified",
+              "displayName": "last_modified",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "lead_source",
+              "displayName": "lead_source",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "LinkedIn",
+                  "value": "LinkedIn"
+                },
+                {
+                  "name": "Google Places API",
+                  "value": "Google Places API"
+                },
+                {
+                  "name": "Lead Source",
+                  "value": "Lead Source"
+                },
+                {
+                  "name": "Cold Email",
+                  "value": "Cold Email"
+                },
+                {
+                  "name": "Warm Referral",
+                  "value": "Warm Referral"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "revenue",
+              "displayName": "revenue",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        -544
+      ],
+      "id": "ec813a63-c71b-4639-ae14-69dc0270bd78",
+      "name": "Update Status - Call Booked",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "dcJV7oUk2Dl6Lc78",
+          "name": "Airtable Personal Access Token account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "-1004464447803",
+        "text": "=<b>🚨 New Error</b>\n\n<b>🔧 Phase:</b> <i>Updating status to \"Call Booked\"</i>\n<b>👤 Lead:</b> <code>{{ $('Email Validation').item.json.fields.email }}</code>\n\n<b>Please update manually</b>\n\n<b>🕐 Time:</b> <i>{{ $now.format('yyyy-MM-dd | HH:mm') }}</i>",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        -448
+      ],
+      "id": "16e7d5d0-be97-47f5-9847-7b0fd04fde8c",
+      "name": "Telegram Alert Call Booked - Fail",
+      "webhookId": "e5d9e95b-f3bb-4553-b718-f4f20c18a0cd",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "telegramApi": {
+          "id": "wiZvSNnjmpPFqBiL",
+          "name": "FreelancerOS Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Calls Booked Tracker",
+        "height": 528,
+        "width": 1136,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        384,
+        -688
+      ],
+      "typeVersion": 1,
+      "id": "9d47efc4-9c1d-48ef-835e-cb407763af30",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Outbound Emails Tracker",
+        "height": 704,
+        "width": 1184,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -880,
+        -688
+      ],
+      "typeVersion": 1,
+      "id": "005fdfea-8f8a-4bba-9573-98033453e6bb",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Weekly Digest",
+        "height": 208,
+        "width": 912
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1600,
+        -688
+      ],
+      "typeVersion": 1,
+      "id": "9fcb8b0b-2157-4fbb-add5-b9ec45715985",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 8,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        1648,
+        -640
+      ],
+      "id": "de071260-bbdd-4d64-ab65-a2e1619767d7",
+      "name": "Monday 8:30 AM",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "notesInFlow": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appRuDEhe2q2QlpAY",
+          "mode": "list",
+          "cachedResultName": "n8n Practice",
+          "cachedResultUrl": "https://airtable.com/appRuDEhe2q2QlpAY"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblnIRYygaCWB76bj",
+          "mode": "list",
+          "cachedResultName": "FreelancerOS Leads Tracker",
+          "cachedResultUrl": "https://airtable.com/appRuDEhe2q2QlpAY/tblnIRYygaCWB76bj"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1872,
+        -640
+      ],
+      "id": "e68306c3-1507-42cc-829d-d0a74069e67a",
+      "name": "Pull Lead Tracker Info",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "dcJV7oUk2Dl6Lc78",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawLeadItems = $('Pull Lead Tracker Info').all();\n\nconst leadItems = [];\nfor (let i = 0; i < rawLeadItems.length; i++) {\n  if (rawLeadItems[i].json.fields !== undefined) {\n    leadItems.push(rawLeadItems[i]);\n  }\n}\nconst seenEmails = {};\nconst dedupedLeadItems = [];\nlet duplicateCount = 0;\n\nfor (let i = 0; i < leadItems.length; i++) {\n  const email = leadItems[i].json.fields.email;\n\n  if (seenEmails[email] === undefined) {\n    seenEmails[email] = true;\n    dedupedLeadItems.push(leadItems[i]);\n  } else {\n    duplicateCount = duplicateCount + 1;\n  }\n}\n\nconst cleanLeadItems = dedupedLeadItems;\n// ---------- Pipeline Status ----------\nconst statusCounts = {};\nlet totalLeads = 0;\n\nfor (let i = 0; i < cleanLeadItems.length; i++) {\n  const record = cleanLeadItems[i].json;\n  const status = record.fields.status;\n\n  totalLeads = totalLeads + 1;\n\n  if (statusCounts[status] === undefined) {\n    statusCounts[status] = 1;\n  } else {\n    statusCounts[status] = statusCounts[status] + 1;\n  }\n}\n\nfunction getCount(statusName) {\n  const count = statusCounts[statusName];\n  if (count === undefined) {\n    return 0;\n  }\n  return count;\n}\n\nconst wonCount = getCount(\"Won\");\nconst lostCount = getCount(\"Lost\");\nconst openPipeline = totalLeads - wonCount - lostCount;\n\n// ---------- Conversion Rates ----------\nconst repliedOrLaterStatuses = [\"Replied\", \"Call Booked\", \"Proposal Sent\", \"Won\", \"Lost\"];\nconst bookedOrLaterStatuses = [\"Call Booked\", \"Proposal Sent\", \"Won\", \"Lost\"];\n\nlet repliedOrLaterCount = 0;\nlet bookedOrLaterCount = 0;\n\nfor (let i = 0; i < cleanLeadItems.length; i++) {\n  const record = cleanLeadItems[i].json;\n  const status = record.fields.status;\n\n  if (repliedOrLaterStatuses.includes(status)) {\n    repliedOrLaterCount = repliedOrLaterCount + 1;\n  }\n\n  if (bookedOrLaterStatuses.includes(status)) {\n    bookedOrLaterCount = bookedOrLaterCount + 1;\n  }\n}\n\nlet replyRate = 0;\nif (totalLeads > 0) {\n  replyRate = repliedOrLaterCount / totalLeads;\n}\n\nlet bookingRate = 0;\nif (repliedOrLaterCount > 0) {\n  bookingRate = bookedOrLaterCount / repliedOrLaterCount;\n}\n\nlet closeRate = 0;\nconst closedTotal = wonCount + lostCount;\nif (closedTotal > 0) {\n  closeRate = wonCount / closedTotal;\n}\n\nfunction toPercent(rate) {\n  const percent = rate * 100;\n  return percent.toFixed(1);\n}\n\n// ---------- Weekly Priorities ----------\nfunction getDaysSince(dateString) {\n  const pastDate = DateTime.fromISO(dateString);\n  const now = DateTime.now();\n  const diff = now.diff(pastDate, \"days\");\n  return diff.days;\n}\n\nfunction getPriority(record) {\n  const status = record.fields.status;\n  const daysSinceUpdate = getDaysSince(record.fields.last_modified);\n\n  if (status === \"Proposal Sent\" && daysSinceUpdate > 5) {\n    return { level: \"HIGH\", reason: \"Proposal going cold, follow up now\" };\n  }\n\n  if (status === \"Replied\" && daysSinceUpdate > 2) {\n    return { level: \"MEDIUM\", reason: \"They replied, you haven't booked a call yet\" };\n  }\n\n  if (status === \"Sent\" && daysSinceUpdate > 14) {\n    return { level: \"LOW\", reason: \"No response in 2 weeks, decide: second touch or drop\" };\n  }\n\n  return null;\n}\n\nconst priorityOrder = { HIGH: 1, MEDIUM: 2, LOW: 3 };\nconst priorityLeads = [];\n\nfor (let i = 0; i < leadItems.length; i++) {\n  const record = leadItems[i].json;\n  const priority = getPriority(record);\n\n  if (priority !== null) {\n    priorityLeads.push({\n      firstName: record.fields.first_name,\n      lastName: record.fields.last_name,\n      companyName: record.fields.company_name,\n      status: record.fields.status,\n      priorityLevel: priority.level,\n      reason: priority.reason\n    });\n  }\n}\n\npriorityLeads.sort(function (a, b) {\n  return priorityOrder[a.priorityLevel] - priorityOrder[b.priorityLevel];\n});\n\nfunction getPriorityEmoji(level) {\n  if (level === \"HIGH\") {\n    return \"🔴\";\n  }\n  if (level === \"MEDIUM\") {\n    return \"🟠\";\n  }\n  return \"🟡\";\n}\n\nlet prioritiesText = \"\";\n\nif (priorityLeads.length === 0) {\n  prioritiesText = \"<i>Nothing urgent, pipeline is healthy.</i>\";\n} else {\n  for (let i = 0; i < priorityLeads.length; i++) {\n    const lead = priorityLeads[i];\n    const emoji = getPriorityEmoji(lead.priorityLevel);\n    prioritiesText = prioritiesText + emoji + \" <b>\" + lead.firstName + \" \" + lead.lastName + \"</b> (\" + lead.companyName + \")\\n<i>\" + lead.reason + \"</i>\\n\\n\";\n  }\n}\n\n// ---------- Build Message ----------\nlet duplicateWarning = \"\";\nif (duplicateCount > 0) {\n  duplicateWarning = \"⚠️ <i>\" + duplicateCount + \" duplicate email(s) found, cleanup needed</i>\\n\\n\";\n}\n\nconst today = DateTime.now().toFormat(\"dd LLL yyyy\");\n\nconst message =\n  \"<b>📊 Monday Digest — \" + today + \"</b>\\n\\n\" +\n  duplicateWarning +\n  \"<b>Pipeline Status</b>\\n\" +\n  \"🔵 Sent: <code>\" + getCount(\"Sent\") + \"</code>\\n\" +\n  \"🟡 Replied: <code>\" + getCount(\"Replied\") + \"</code>\\n\" +\n  \"🟢 Call Booked: <code>\" + getCount(\"Call Booked\") + \"</code>\\n\" +\n  \"🟣 Proposal Sent: <code>\" + getCount(\"Proposal Sent\") + \"</code>\\n\" +\n  \"✅ Won: <code>\" + wonCount + \"</code>\\n\" +\n  \"❌ Lost: <code>\" + lostCount + \"</code>\\n\\n\" +\n  \"<b>📈 Open Pipeline:</b> <code>\" + openPipeline + \"</code> / <code>\" + totalLeads + \"</code> total\\n\\n\" +\n  \"<b>Conversion Rates</b>\\n\" +\n  \"💬 Reply Rate: <b>\" + toPercent(replyRate) + \"%</b>\\n\" +\n  \"📅 Booking Rate: <b>\" + toPercent(bookingRate) + \"%</b>\\n\" +\n  \"🏆 Close Rate: <b>\" + toPercent(closeRate) + \"%</b>\\n\\n\" +\n  \"<b>🎯 This Week's Priorities</b>\\n\" +\n  prioritiesText;\n\nreturn [\n  {\n    json: {\n      message: message\n    }\n  }\n];\n\nreturn [\n  {\n    json: {\n      message: message\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2096,
+        -640
+      ],
+      "id": "c5d63eca-6ab5-4c8c-a8ea-5518a3d2dc66",
+      "name": "Build Full Weekly Digest"
+    },
+    {
+      "parameters": {
+        "chatId": "-1004464447803",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2320,
+        -640
+      ],
+      "id": "f4341b30-f0d5-4ae2-a20d-62e24f1ea498",
+      "name": "Send Weekly Digest",
+      "webhookId": "e5d9e95b-f3bb-4553-b718-f4f20c18a0cd",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "telegramApi": {
+          "id": "wiZvSNnjmpPFqBiL",
+          "name": "FreelancerOS Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "months",
+              "triggerAtHour": 8,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        1664,
+        -320
+      ],
+      "id": "eb66cd2a-8712-4c12-9ebe-a16cfbf128d2",
+      "name": "1st of the month 8:30 AM"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appRuDEhe2q2QlpAY",
+          "mode": "list",
+          "cachedResultName": "n8n Practice",
+          "cachedResultUrl": "https://airtable.com/appRuDEhe2q2QlpAY"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblnIRYygaCWB76bj",
+          "mode": "list",
+          "cachedResultName": "FreelancerOS Leads Tracker",
+          "cachedResultUrl": "https://airtable.com/appRuDEhe2q2QlpAY/tblnIRYygaCWB76bj"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1888,
+        -320
+      ],
+      "id": "366e1e7f-7850-434e-b5c2-9279438494a8",
+      "name": "Fetch Lead Tracker",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "dcJV7oUk2Dl6Lc78",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appRuDEhe2q2QlpAY",
+          "mode": "list",
+          "cachedResultName": "n8n Practice",
+          "cachedResultUrl": "https://airtable.com/appRuDEhe2q2QlpAY"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblnIinkCyMTEeS4n",
+          "mode": "list",
+          "cachedResultName": "FreelancerOS Time Table",
+          "cachedResultUrl": "https://airtable.com/appRuDEhe2q2QlpAY/tblnIinkCyMTEeS4n"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        2112,
+        -320
+      ],
+      "id": "c52ad003-d7bc-4c3e-80b9-77365bda3c59",
+      "name": "Fetch Time Table",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "notesInFlow": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "dcJV7oUk2Dl6Lc78",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "function isLastMonth(dateString) {\n  const itemDate = DateTime.fromISO(dateString);\n\n  const startOfThisMonth = DateTime.now().startOf(\"month\");\n  const startOfLastMonth = startOfThisMonth.minus({ months: 1 });\n  const endOfLastMonth = startOfThisMonth.minus({ days: 1 }).endOf(\"day\");\n\n  if (itemDate >= startOfLastMonth && itemDate <= endOfLastMonth) {\n    return true;\n  }\n\n  return false;\n}\n\nconst leadItems = $('Fetch Lead Tracker').all();\nconst timeItems = $('Fetch Time Table').all();\n\n// ---------- Revenue ----------\nlet revenue = 0;\n\nfor (let i = 0; i < leadItems.length; i++) {\n  const record = leadItems[i].json;\n  const status = record.fields.status;\n  const wonDate = record.fields.last_modified;\n\n  if (status === \"Won\" && isLastMonth(wonDate)) {\n    const leadRevenue = record.fields.revenue;\n    if (leadRevenue !== undefined) {\n      revenue = revenue + leadRevenue;\n    }\n  }\n}\n\n// ---------- Hours Worked ----------\nlet hoursWorked = 0;\n\nfor (let i = 0; i < timeItems.length; i++) {\n  const record = timeItems[i].json;\n  const entryDate = record.fields.date;\n\n  if (isLastMonth(entryDate)) {\n    const hours = record.fields.hours;\n    if (hours !== undefined) {\n      hoursWorked = hoursWorked + hours;\n    }\n  }\n}\n\n// ---------- Effective Hourly Rate ----------\nlet effectiveHourlyRate = 0;\n\nif (hoursWorked > 0) {\n  effectiveHourlyRate = revenue / hoursWorked;\n}\n\n// ---------- Top Lead Source ----------\nconst revenueBySource = {};\n\nfor (let i = 0; i < leadItems.length; i++) {\n  const record = leadItems[i].json;\n  const status = record.fields.status;\n  const wonDate = record.fields.last_modified;\n\n  if (status === \"Won\" && isLastMonth(wonDate)) {\n    const source = record.fields.lead_source;\n    const leadRevenue = record.fields.revenue;\n\n    if (leadRevenue !== undefined) {\n      if (revenueBySource[source] === undefined) {\n        revenueBySource[source] = leadRevenue;\n      } else {\n        revenueBySource[source] = revenueBySource[source] + leadRevenue;\n      }\n    }\n  }\n}\n\nlet topLeadSource = \"None\";\nlet topLeadSourceRevenue = 0;\nconst sourceNames = Object.keys(revenueBySource);\n\nfor (let i = 0; i < sourceNames.length; i++) {\n  const source = sourceNames[i];\n  const sourceRevenue = revenueBySource[source];\n\n  if (sourceRevenue > topLeadSourceRevenue) {\n    topLeadSourceRevenue = sourceRevenue;\n    topLeadSource = source;\n  }\n}\n\n// ---------- Build Message ----------\nconst monthName = DateTime.now().minus({ months: 1 }).toFormat(\"LLLL yyyy\");\n\nconst message =\n  \"<b>🗓️ Monthly Report — \" + monthName + \"</b>\\n\\n\" +\n  \"<b>💰 Revenue:</b> <code>€\" + revenue + \"</code>\\n\" +\n  \"<b>⏱️ Hours Worked:</b> <code>\" + hoursWorked + \"</code>\\n\" +\n  \"<b>⚡ Effective Hourly Rate:</b> <code>€\" + effectiveHourlyRate.toFixed(2) + \"/hr</code>\\n\" +\n  \"<b>🏆 Top Lead Source:</b> <i>\" + topLeadSource + \"</i> (€\" + topLeadSourceRevenue + \")\";\n\nreturn [\n  {\n    json: {\n      message: message\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2336,
+        -320
+      ],
+      "id": "4eca3a34-8010-47d7-ab7a-826875909f77",
+      "name": "Build Monthly Report",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "chatId": "-1004464447803",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2560,
+        -320
+      ],
+      "id": "df3a1cae-c2e9-45ca-8786-29ad40d807f5",
+      "name": "Send Monthly Report",
+      "webhookId": "e5d9e95b-f3bb-4553-b718-f4f20c18a0cd",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "telegramApi": {
+          "id": "wiZvSNnjmpPFqBiL",
+          "name": "FreelancerOS Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Monthly Report",
+        "height": 208,
+        "width": 1184,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1600,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "e09ce57e-f34c-4c9f-b8c0-3279aadf1792",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "chatId": "-1004464447803",
+        "text": "=<b>⚠️ Unrecognized Action</b>\n\nThe Email Software webhook sent an action n8n doesn't recognize: <code>{{ $json.action }}</code>\n\n<b>🕐 Time:</b> <i>{{ $now.format('yyyy-MM-dd | HH:mm') }}</i>",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "d1ff656e-6a12-492d-8f90-56e25065748d",
+      "name": "Telegram Alert Unrecognized Action",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -128,
+        -160
+      ],
+      "webhookId": "3e1d36af-da2b-405c-ab2d-8d03be329735",
+      "credentials": {
+        "telegramApi": {
+          "id": "wiZvSNnjmpPFqBiL",
+          "name": "FreelancerOS Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        96,
+        -656
+      ],
+      "id": "85fb7910-a91f-40f7-95b8-41f76db8d3a3",
+      "name": "Do nothing"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Email Software": {
+      "main": [
+        [
+          {
+            "node": "Data Cleanup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data Cleanup": {
+      "main": [
+        [
+          {
+            "node": "Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Router": {
+      "main": [
+        [
+          {
+            "node": "Update Status - Sent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Status - Replied",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram Alert Unrecognized Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Status - Sent": {
+      "main": [
+        [
+          {
+            "node": "Do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram Alert Update Sent - Fail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Status - Replied": {
+      "main": [
+        [
+          {
+            "node": "Telegram Alert Update Reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram Alert Update Reply - Fail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendly": {
+      "main": [
+        [
+          {
+            "node": "Email Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Search": {
+      "main": [
+        [
+          {
+            "node": "Email Validation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Validation": {
+      "main": [
+        [
+          {
+            "node": "Update Status - Call Booked",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram Alert Non-Client Call Booked",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Status - Call Booked": {
+      "main": [
+        [
+          {
+            "node": "Telegram Alert Call Booked",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram Alert Call Booked - Fail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Monday 8:30 AM": {
+      "main": [
+        [
+          {
+            "node": "Pull Lead Tracker Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pull Lead Tracker Info": {
+      "main": [
+        [
+          {
+            "node": "Build Full Weekly Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Full Weekly Digest": {
+      "main": [
+        [
+          {
+            "node": "Send Weekly Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1st of the month 8:30 AM": {
+      "main": [
+        [
+          {
+            "node": "Fetch Lead Tracker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Lead Tracker": {
+      "main": [
+        [
+          {
+            "node": "Fetch Time Table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Time Table": {
+      "main": [
+        [
+          {
+            "node": "Build Monthly Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Monthly Report": {
+      "main": [
+        [
+          {
+            "node": "Send Monthly Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "errorWorkflow": "3iFsvPbEn7WblJSP"
+  },
+  "versionId": "75a0ce01-f0c2-4ccf-80a8-fce4c53ee382",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "87f87ba89202c8c9ffe1c49d95a1048ec19d76c5d9416032cb6598fffd0d51d6"
+  },
+  "nodeGroups": [],
+  "id": "5QHeQdHRnhP5mVWI",
+  "tags": []
+}
