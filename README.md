@@ -15,11 +15,14 @@ n8n-workflows/
 └── README.md
 </pre>
 
-<h3>Workflows</h3>
+<h3>Portfolio Workflows</h3>
 
 | Workflow | What it does |
 |---|---|
-| [secure-lead-intake-webhook](portfolio/secure-lead-intake-webhook/) | Captures form submissions and routes them automatically, no manual entry. |
+| [freelancer-lead-intake-system](portfolio/freelancer-lead-intake-system/) | Captures inbound leads, scores and qualifies them, and logs qualified leads to Airtable with a Slack alert, no manual follow-up tracking. |
+| [ai-customer-support-triage](portfolio/ai-customer-support-triage/) | Reads incoming support tickets, classifies and prioritizes them with AI, and routes each to the right queue, no manual sorting. |
+| [ai-business-assistant-for-professional-services](portfolio/ai-business-assistant-for-professional-services/) | Handles routine client requests with AI, flags anything below a confidence threshold for human review, and logs every decision to an audit trail. |
+| [freelancerOS](portfolio/freelancerOS/) | Routes call bookings, lead tracking, and time logs through one system, with alerts for anything it doesn't recognize. |
 | [weekly-billing-reconciliation](./portfolio/weekly-billing-reconciliation) | Reconciles CRM, invoicing, and project data every Friday and flags what doesn't add up, no manual cross-checking. |
 
 <h3>Security</h3>
