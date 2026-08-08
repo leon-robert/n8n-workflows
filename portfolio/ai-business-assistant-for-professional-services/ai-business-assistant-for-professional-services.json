@@ -1,0 +1,1709 @@
+{
+  "name": "ai-business-assistant-for-professional-services",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -2816,
+        368
+      ],
+      "id": "3b2d57ae-f7b2-4533-a847-a67d662258fe",
+      "name": "Send Message",
+      "webhookId": "e947ac40-6716-4e59-8577-547ed3dc3487"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "182JE709QVmXAtZUreCY6HyAxkzv2TJqx",
+          "mode": "list",
+          "cachedResultName": "Business Policies",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/182JE709QVmXAtZUreCY6HyAxkzv2TJqx"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1344,
+        -272
+      ],
+      "id": "4a9891d6-fd9e-43e1-932a-47a57d348455",
+      "name": "Policies Add/Update",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "c1kNJNti6QkPJnx0",
+          "name": "Google Drive account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1oSKn9mgPw2VSxEGd0-AP-kuYbzcVzUxz",
+          "mode": "list",
+          "cachedResultName": "Business Invoices",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1oSKn9mgPw2VSxEGd0-AP-kuYbzcVzUxz"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1360,
+        -16
+      ],
+      "id": "a30356ec-fde7-4c44-bfe5-2077bcee479a",
+      "name": "Invoices Add/Update",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "c1kNJNti6QkPJnx0",
+          "name": "Google Drive account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1ep6A7AIGoQJrMD0Kt-OqxiAFz_engpKW",
+          "mode": "list",
+          "cachedResultName": "Business Contracts",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1ep6A7AIGoQJrMD0Kt-OqxiAFz_engpKW"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1360,
+        224
+      ],
+      "id": "3c47a892-9d55-440a-bc74-6ba270557a30",
+      "name": "Contracts Add/Update",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "c1kNJNti6QkPJnx0",
+          "name": "Google Drive account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1008,
+        -32
+      ],
+      "id": "877894a7-cb6b-4653-a7be-8d2137515bf3",
+      "name": "Download Docs",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "c1kNJNti6QkPJnx0",
+          "name": "Google Drive account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -512,
+        -48
+      ],
+      "id": "075417f1-4e34-470e-8deb-a7e7951e7600",
+      "name": "PGVECTOR Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2480,
+        752
+      ],
+      "id": "ffcb9679-d603-4427-b56f-31cda25dcad5",
+      "name": "OpenAI Embedding",
+      "alwaysOutputData": false,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "openAiApi": {
+          "id": "KTfbh9oQjs3FRiMr",
+          "name": "OpenAI account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 200,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        416
+      ],
+      "id": "dafd715e-7b97-4aae-bffe-2440eb1fd810",
+      "name": "Recursive Text Split",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        -464,
+        224
+      ],
+      "id": "308cb78a-f429-480e-b43a-59fccc5e884e",
+      "name": "Data Loader",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "## Who you are\nYou are a helpful assistant who answers the user's questions with source citations by using the [Get stored data] tool, which retrieves data using RAG.\n\n## Voice and tone\nAlways respond in a helpful voice and have a brief structure; do not include useless information.\n\n## Confidence score\nYou have a confidence score from 1 to 100, and you have to analyse the data retrieved by the tool, then set a score of confidence. \n\n## Other rules\n- Say \"I don't know\" when it's not in the docs\n- Flag it when two documents disagree\n- Before answering, confirm the specific client/entity named in the question actually appears in the retrieved documents. If it doesn't, say you have no record of them, don't substitute a different client's data."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -2608,
+        368
+      ],
+      "id": "e30881db-6b25-4b91-be8f-c1716432ce40",
+      "name": "AI Assistant",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 30
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        -2656,
+        592
+      ],
+      "id": "2694a5cf-a702-4ab2-a03e-49672627fe93",
+      "name": "Simple Memory",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.6-luna",
+          "mode": "list",
+          "cachedResultName": "gpt-5.6-luna"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -2816,
+        592
+      ],
+      "id": "4393b963-65c9-4292-b3c2-0f11a683aafe",
+      "name": "OpenAI 5.6-Luna",
+      "credentials": {
+        "openAiApi": {
+          "id": "KTfbh9oQjs3FRiMr",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Search for information requested by the AI Assistant and return the documents you searched for.",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -2512,
+        592
+      ],
+      "id": "28aa9e79-93a7-4483-b87e-584536501cef",
+      "name": "Get stored data",
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "audit-trail",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "action",
+              "fieldValue": "answer_query"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "success"
+            },
+            {
+              "fieldId": "reference_id",
+              "fieldValue": "={{ $('AI Assistant').item.json.output.reference_id }}"
+            },
+            {
+              "fieldId": "input_summary",
+              "fieldValue": "={{ $('AI Assistant').item.json.output.input_summary }}"
+            },
+            {
+              "fieldId": "output_summary",
+              "fieldValue": "={{ $('AI Assistant').item.json.output.output_summary }}"
+            },
+            {
+              "fieldId": "confidence",
+              "fieldValue": "={{ $('AI Assistant').item.json.output.confidence_score }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -2048,
+        96
+      ],
+      "id": "7535380f-643b-43a0-8ffc-d527ff35cdc2",
+      "name": "Log answer_query",
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"input_summary\": \"A summary of chatInput\",\n\"output_summary\": \"A summary of the output\",\n\"output_message\": \"The entire output message\",\n\"confidence_score\": \"The confidence score\",\n\"reference_id\": \"The name of the documents used\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -2208,
+        592
+      ],
+      "id": "c228a1d2-280f-493b-ab85-bab015172010",
+      "name": "JSON Output Parser",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "tableId": "audit-trail",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "action",
+              "fieldValue": "new_chat"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "success"
+            },
+            {
+              "fieldId": "reference_id",
+              "fieldValue": "={{ $json.sessionId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -2608,
+        208
+      ],
+      "id": "c4b714ba-8704-4979-84fb-4c158c4ce673",
+      "name": "Log new_chat",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "audit-trail",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "action",
+              "fieldValue": "answer_query"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "fail"
+            },
+            {
+              "fieldId": "error_message",
+              "fieldValue": "={{ $json.error }}"
+            },
+            {
+              "fieldId": "reference_id",
+              "fieldValue": "={{ $json.sessionId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -2256,
+        400
+      ],
+      "id": "29068eff-15f4-49bc-9251-7156bd3c16ee",
+      "name": "Log answer_query error",
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BHWRRHCS0",
+          "mode": "list",
+          "cachedResultName": "error-notifications"
+        },
+        "text": "You have a new error. Please visit supabase.",
+        "otherOptions": {
+          "includeLinkToWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        1024,
+        1168
+      ],
+      "id": "e01199b8-a96a-48f3-bb4c-63217111d112",
+      "name": "Send error notification",
+      "webhookId": "a2b70b16-1236-4491-a5b8-775729c41688",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "3pR3kYSg4TEHDn9A",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "audit-trail",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "action",
+              "fieldValue": "fetch_new_file"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "success"
+            },
+            {
+              "fieldId": "reference_id",
+              "fieldValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1008,
+        -336
+      ],
+      "id": "51bf628f-7c8f-4bed-b837-8dd9e90457a5",
+      "name": "Log new_file",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "tableId": "audit-trail",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "action",
+              "fieldValue": "fetch_new_file"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "fail"
+            },
+            {
+              "fieldId": "reference_id",
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldId": "error_message",
+              "fieldValue": "={{ $json.error }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1024,
+        320
+      ],
+      "id": "50cb1dfa-1f62-488b-ae14-b06b8eb4126a",
+      "name": "Log new_file error",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "audit-trail",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "action",
+              "fieldValue": "download_new_file"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "success"
+            },
+            {
+              "fieldId": "reference_id",
+              "fieldValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -768,
+        -224
+      ],
+      "id": "11cc36d5-8506-43bf-827d-0528c4dd0032",
+      "name": "Log download_new_file",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "tableId": "audit-trail",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "action",
+              "fieldValue": "download_new_file"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "fail"
+            },
+            {
+              "fieldId": "reference_id",
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldId": "error_message",
+              "fieldValue": "={{ $json.error }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -768,
+        112
+      ],
+      "id": "1890b14c-ca47-46cf-b680-5547e9d18e99",
+      "name": "Log download_new_file error",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "audit-trail",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "action",
+              "fieldValue": "pgvector_store"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "success"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -48
+      ],
+      "id": "ac741ed6-d2f7-47dc-ac53-4144415de47f",
+      "name": "Log pgvector_store",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "tableId": "audit-trail",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "action",
+              "fieldValue": "data_load"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "fail"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        208
+      ],
+      "id": "47883646-9871-43f8-b41a-8620f56429e8",
+      "name": "Log data_load fail",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "audit-trail",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "action",
+              "fieldValue": "rec_text_split"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "fail"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        400
+      ],
+      "id": "0daf5e30-c2e1-4926-9028-4da306ea10d9",
+      "name": "Log rec_text_split fail",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "audit-trail",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "action",
+              "fieldValue": "embedding"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "fail"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -2192,
+        736
+      ],
+      "id": "4805e1db-7004-4a91-bad5-362bcf73b3a8",
+      "name": "Log embedding fail",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "audit-trail",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "action",
+              "fieldValue": "parse_json"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "fail"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -2016,
+        576
+      ],
+      "id": "05134036-e162-466f-ac94-6839fa4fb774",
+      "name": "Log json_parser fail",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "audit-trail",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "action",
+              "fieldValue": "chat_memory"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "fail"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -2496,
+        928
+      ],
+      "id": "c4a557d8-ba0f-4a3d-9e14-714472ce7867",
+      "name": "Log chat_memory fail",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# RAG System\n",
+        "height": 976,
+        "width": 1616,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1472,
+        -384
+      ],
+      "id": "6f72c8c0-2537-4f28-9e42-793e53064563",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# AI Assistant using RAG and confidence score\n",
+        "height": 1024,
+        "width": 1360,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2896,
+        80
+      ],
+      "id": "75f90730-407d-481a-9b05-d4a25dfd0877",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "sendAndWait",
+        "user": {
+          "__rl": true,
+          "value": "U09RH711D5E",
+          "mode": "list",
+          "cachedResultName": "nocoderobert05"
+        },
+        "message": "=The confidence score was below 76 and the question & answer escalated to you.\n\nInput Summary:  {{ $('AI Assistant').item.json.output.input_summary }}\n\nOutput Summary: {{ $('AI Assistant').item.json.output.output_summary }}",
+        "responseType": "customForm",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Your response",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "responseFormButtonLabel": "Submit"
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        -2048,
+        288
+      ],
+      "id": "e4d52a6f-0abc-427c-978b-79bec2bd1466",
+      "name": "Send message and wait for response",
+      "webhookId": "43c428b2-aa69-44d5-9305-72b55ec41e7f",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "3pR3kYSg4TEHDn9A",
+          "name": "Slack account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "tableId": "audit-trail",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "action",
+              "fieldValue": "answer_query_escalated"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "success"
+            },
+            {
+              "fieldId": "reference_id",
+              "fieldValue": "={{ $('AI Assistant').item.json.output.reference_id }}"
+            },
+            {
+              "fieldId": "input_summary",
+              "fieldValue": "={{ $('AI Assistant').item.json.output.input_summary }}"
+            },
+            {
+              "fieldId": "output_summary",
+              "fieldValue": "={{ $json.data['Your response'] }}"
+            },
+            {
+              "fieldId": "confidence",
+              "fieldValue": "={{ $('AI Assistant').item.json.output.confidence_score }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1760,
+        224
+      ],
+      "id": "9dba6f40-4dfe-4db4-bb28-625326f4e346",
+      "name": "Log answer_query1",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "audit-trail",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "action",
+              "fieldValue": "answer_query_escalation"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "fail"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1760,
+        384
+      ],
+      "id": "e2c2bf78-aecd-4e9b-aa89-affb7ecb043b",
+      "name": "Log escalation fail",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "af095dd5-fbcc-4b83-a839-6a2e8eb267cd",
+              "leftValue": "={{ $json.output.confidence_score }}",
+              "rightValue": 76,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -2288,
+        224
+      ],
+      "id": "17e8d20e-dfa2-4317-9fbf-261e76647e23",
+      "name": "confidence > 76"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 8,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        480,
+        176
+      ],
+      "id": "c6d1cd5b-9eee-4233-971f-03ee394bc14c",
+      "name": "Monday 8:30am"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "audit-trail",
+        "returnAll": true,
+        "filterType": "string",
+        "filterString": "=timestamp=gte.{{ $now.minus({days: 7}).startOf('day').toUTC() }}&timestamp=lt.{{ $now.startOf('day').toUTC() }}&or=(action.eq.answer_query,action.eq.answer_query_escalation)"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        688,
+        176
+      ],
+      "id": "66bd200a-1728-4259-8695-24dd71f62e3a",
+      "name": "Fetch Audit Trail",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "field": "id"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "action",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        896,
+        176
+      ],
+      "id": "751b12b2-fb9d-4ea6-86e4-f511180bbb05",
+      "name": "Summarize"
+    },
+    {
+      "parameters": {
+        "content": "# Weekly Digest\n",
+        "height": 272,
+        "width": 928
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        400,
+        112
+      ],
+      "typeVersion": 1,
+      "id": "8e9b890f-11f7-4c5b-aac6-f8a07c6b40cf",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "user",
+        "user": {
+          "__rl": true,
+          "value": "U09RH711D5E",
+          "mode": "list",
+          "cachedResultName": "nocoderobert05"
+        },
+        "text": "=Weekly digest: human vs AI responses\n\nHuman: {{ $json.count_id }}\n\nAI Repsonses: {{ $json.count_id }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        1104,
+        176
+      ],
+      "id": "67766e1a-6b56-4672-9bc4-4f570af5d66f",
+      "name": "Send a message",
+      "webhookId": "65c6fb5d-2dc5-494a-a6cc-e182b91b7ca7",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "3pR3kYSg4TEHDn9A",
+          "name": "Slack account"
+        }
+      },
+      "notes": "Should fix the expressions inside the Slack message when I have more data"
+    },
+    {
+      "parameters": {},
+      "id": "11832573-92b3-4221-bc4f-eded307ac7b1",
+      "name": "Error Monitor",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1136,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "audit-trail",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "action",
+              "fieldValue": "={{ $json.execution.lastNodeExecuted || $json.workflow.name }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "fail"
+            },
+            {
+              "fieldId": "error_message",
+              "fieldValue": "={{ $json.execution.error.message }}"
+            }
+          ]
+        }
+      },
+      "id": "76742881-a4c4-4127-906a-145c286863ee",
+      "name": "Log unhandled fail",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        1200
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "ZRoifcl7Fg98cbjd",
+          "name": "Supabase account / Knowledge Base"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Error monitoring",
+        "height": 224,
+        "width": 624,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1232,
+        1152
+      ],
+      "id": "82e69fb3-8ecc-40e3-8c0f-f319df4cbdac",
+      "name": "Sticky Note3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Contracts Add/Update": {
+      "main": [
+        [
+          {
+            "node": "Download Docs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log new_file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log new_file error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Invoices Add/Update": {
+      "main": [
+        [
+          {
+            "node": "Download Docs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log new_file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log new_file error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Policies Add/Update": {
+      "main": [
+        [
+          {
+            "node": "Download Docs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log new_file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log new_file error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Docs": {
+      "main": [
+        [
+          {
+            "node": "PGVECTOR Store",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log download_new_file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log download_new_file error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PGVECTOR Store": {
+      "main": [
+        [
+          {
+            "node": "Log pgvector_store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Embedding": {
+      "ai_embedding": [
+        [
+          {
+            "node": "PGVECTOR Store",
+            "type": "ai_embedding",
+            "index": 0
+          },
+          {
+            "node": "Get stored data",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ],
+      "main": [
+        [
+          {
+            "node": "Log embedding fail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Text Split": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ],
+      "main": [
+        [
+          {
+            "node": "Log rec_text_split fail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "PGVECTOR Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ],
+      "main": [
+        [
+          {
+            "node": "Log data_load fail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message": {
+      "main": [
+        [
+          {
+            "node": "AI Assistant",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log new_chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Assistant",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ],
+      "main": [
+        [
+          {
+            "node": "Log chat_memory fail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI 5.6-Luna": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Assistant",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get stored data": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Assistant": {
+      "main": [
+        [
+          {
+            "node": "confidence > 76",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log answer_query error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JSON Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Assistant",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ],
+      "main": [
+        [
+          {
+            "node": "Log json_parser fail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log answer_query error": {
+      "main": [
+        [
+          {
+            "node": "Send error notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log chat_memory fail": {
+      "main": [
+        [
+          {
+            "node": "Send error notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log json_parser fail": {
+      "main": [
+        [
+          {
+            "node": "Send error notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log pgvector_store": {
+      "main": [
+        []
+      ]
+    },
+    "Log data_load fail": {
+      "main": [
+        [
+          {
+            "node": "Send error notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log rec_text_split fail": {
+      "main": [
+        [
+          {
+            "node": "Send error notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log embedding fail": {
+      "main": [
+        [
+          {
+            "node": "Send error notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log download_new_file error": {
+      "main": [
+        [
+          {
+            "node": "Send error notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log new_file error": {
+      "main": [
+        [
+          {
+            "node": "Send error notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response": {
+      "main": [
+        [
+          {
+            "node": "Log answer_query1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log escalation fail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log escalation fail": {
+      "main": [
+        [
+          {
+            "node": "Send error notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "confidence > 76": {
+      "main": [
+        [
+          {
+            "node": "Log answer_query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Monday 8:30am": {
+      "main": [
+        [
+          {
+            "node": "Fetch Audit Trail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Audit Trail": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Monitor": {
+      "main": [
+        [
+          {
+            "node": "Log unhandled fail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log unhandled fail": {
+      "main": [
+        [
+          {
+            "node": "Send error notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "ca2abe7c-609b-4cf5-beda-e8de5711b2eb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "87f87ba89202c8c9ffe1c49d95a1048ec19d76c5d9416032cb6598fffd0d51d6"
+  },
+  "nodeGroups": [],
+  "id": "Ap1W7wjZwEroJGVT",
+  "tags": []
+}
